@@ -55,6 +55,7 @@ public class ProjectDao <T> extends FactoryManager{
 	 * @return Lista de items
 	 * @throws Exception  si hay un error lo retorna como excepcion
 	 */
+	@SuppressWarnings("unchecked")
 	public List<T> findAll(String namedQuery) throws Exception{
 		
 		if (!em.getTransaction().isActive())
