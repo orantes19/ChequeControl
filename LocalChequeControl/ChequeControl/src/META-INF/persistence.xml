@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="ChequeControl">
+		
+		<class>model.ChkBanco</class>
+		<class>model.ChkCheque</class>
+		<class>model.ChkChequera</class>
+		<class>model.ChkConfCheque</class>
+		<class>model.ChkCuenta</class>
+		<class>model.ChkMovimientosCuenta</class>
+		<class>model.ChkMovimientosCuentaLog</class>
+		<class>model.ChkProveedor</class>
+		<class>model.ChkRol</class>
+		<class>model.ChkRolesPorUsuario</class>
+		<class>model.ChkRolesPorUsuarioPK</class>
+		<class>model.ChkUsuario</class>
+		<properties>
+			<property name="hibernate.show_sql" value="true" />
+			<property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
+			<property name="javax.persistence.jdbc.user" value="system" />
+			<property name="javax.persistence.jdbc.password" value="root" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+
+		</properties>
+	</persistence-unit>
+</persistence>
