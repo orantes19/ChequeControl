@@ -1,11 +1,12 @@
 package proyecto.umg.dao;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
-import model.ChkUsuario;
 import proyecto.umg.persistence.FactoryManager;
 /**
  * 
@@ -31,6 +32,7 @@ public class ProjectDao <T> extends FactoryManager{
 		em = factory.createEntityManager();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T findElementById(Object id) throws Exception{
 		
 		if (!em.getTransaction().isActive())
@@ -74,12 +76,45 @@ public class ProjectDao <T> extends FactoryManager{
 			em.getTransaction().rollback();
 			e.printStackTrace();
 			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+		}		
+		
+	}
+	@SuppressWarnings("unchecked")
+	public List<T> findElements(String namedQuery, Object[] params) throws Exception{
+		
+		if (!em.getTransaction().isActive())
+			em.getTransaction().begin();
+		
+		try{
+			Query query = em.createQuery(namedQuery);
+			int num = 1;
+			if (params !=null){
+				for (Object o: params){
+					query.setParameter(num, o);
+					num++;
+					
+				}
+			}
+						
+			listaItems = (List<T>) query.getResultList();			
+			
+			return listaItems;
+			
+			
+			
+		}catch(RuntimeException e){
+			em.getTransaction().rollback();
+			e.printStackTrace();
+			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+		}		
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void getReference(Object id){
+		if (!em.contains(entity)){
+			entity = (T) em.getReference(entity.getClass(), id);	
 		}
-		
-		
-		
-		
-		
 	}
 	
 	public T save() throws Exception{	
@@ -94,7 +129,8 @@ public class ProjectDao <T> extends FactoryManager{
 					
 			
 		}catch(RuntimeException e){
-			em.getTransaction().rollback();
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
 			e.printStackTrace();
 			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
 			
@@ -122,13 +158,69 @@ public class ProjectDao <T> extends FactoryManager{
 			em.getTransaction().begin();
 		
 		try{
+			System.out.println("Antes de eliminar");
 			if (em.contains(entity)){
-				System.out.println("Entity contiene entidad   ");
+				System.out.println("Listo para la transaccion");
 				em.merge(entity);
 				em.getTransaction().commit();
+				
 			}
 			
 					
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			em.getTransaction().rollback();
+			
+			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+			
+		}
+		return entity;
+		
+	}
+	
+	public void borrar() throws Exception {
+		
+		if (!em.getTransaction().isActive())
+			em.getTransaction().begin();
+		
+		try{
+			
+			if (em.contains(entity)){
+				em.remove(entity);
+				em.getTransaction().commit();
+				
+			}
+			
+					
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			em.getTransaction().rollback();
+			
+			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+			
+		}
+		
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public T merge(String objectId) throws Exception {
+		
+		if (!em.getTransaction().isActive())
+			em.getTransaction().begin();
+		 
+		//entity = (T) em.getReference(entity.getClass(), obtieneValor(objectId));
+		try{	
+			System.out.println("Listo para eliminar");
+				if (!em.contains(entity)){
+					entity = (T) em.getReference(entity.getClass(), obtieneValor(objectId));
+					System.out.println("Contiene la entidad  "+entity);
+				}
+				em.merge(entity);				
+				em.getTransaction().commit();				
 			
 		}catch(Exception e){
 			em.getTransaction().rollback();
@@ -160,5 +252,17 @@ public class ProjectDao <T> extends FactoryManager{
 			factory.close();
 		}
 		
+	}
+	
+	private Object obtieneValor(String atributo) throws Exception{
+		Object valor = null;
+		Method[] metodos = entity.getClass().getMethods();
+		for(Method metodo: metodos){
+			if (metodo.getName().equalsIgnoreCase("get"+atributo)){
+				valor = metodo.invoke(entity);
+				return valor;
+			}
+		}
+		return valor;
 	}
 }

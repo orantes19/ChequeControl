@@ -55,7 +55,7 @@ public class ChkUsuario  implements Serializable {
 	private String usuarioCreacion;
 
 	//bi-directional many-to-one association to ChkRolesPorUsuario
-	@OneToMany(mappedBy="chkUsuario")
+	@OneToMany(mappedBy="chkUsuario",cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ChkRolesPorUsuario> chkRolesPorUsuarios;
 	
 	

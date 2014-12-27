@@ -1,5 +1,9 @@
 package proyecto.umg.base;
 
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import model.ChkRol;
 import model.ChkRolesPorUsuario;
 import model.ChkUsuario;
@@ -8,8 +12,12 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 /**
  * Clase principal para la generacion de las vistas, esta es la pantalla principal
  * @author Ronald Orantes
@@ -23,7 +31,25 @@ public class ViewBase extends CustomComponent {
 	/**
 	 * 
 	 */
+	
+	public static final int TIEMPO_DELAY_NOTIFICACIONES = 1000;
 	private static final long serialVersionUID = 1L;
+	
+	protected static final String OK = "ok.png";
+	
+	protected static final String ERROR = "stop2.png";
+	
+	protected static final String VOS_TU_MADRE = "vostumadre.png";
+	
+	protected static final String ADVERTENCIA = "advertencia.jpg";
+	
+	protected static final String VIEW = "VIEW";
+	
+	protected static final String EDIT = "EDIT";
+	
+	protected static final String EMPTY = "";
+	
+	protected static final String LISTA_ITEMS_METHOD = "buildMainLayout";
 
 	/**
 	 * Muestra notificacion de error en pantalla
@@ -32,12 +58,64 @@ public class ViewBase extends CustomComponent {
 	 * @param padre Pagina padre
 	 * @return
 	 */
-	protected void error(String titulo, String mensajeHTML, Page padre,String imagen){
+	public void error(String titulo, String mensajeHTML, Page padre,String imagen){
 		Notification notificacion = new Notification("<b>"+titulo+"</b>",mensajeHTML,Notification.Type.ERROR_MESSAGE,true);
-		notificacion.setDelayMsec(1500);
+		notificacion.setDelayMsec(TIEMPO_DELAY_NOTIFICACIONES);
 		notificacion.setIcon(new ThemeResource("images/notificaciones/"+imagen));
 		notificacion.setStyleName("notificacion-error");
-		notificacion.show(padre);
+		notificacion.show(Page.getCurrent());
+	}
+	protected String formatearFecha(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(date);
+	}
+	public void cerrarSesion(Page pagina){ 
+		  info("Cerrar Sesion","Sesion finalizada",pagina,OK);
+		  getSession().close();
+		  Page.getCurrent().setLocation("/ChequeControl");
+		 }
+	
+	protected TextField getTextField(String caption,String text){
+		TextField tf = new TextField(caption, text);
+		tf.setStyleName("textolabel");
+		return tf;
+	}
+	protected TextField getTextField(String caption,String text, boolean nuevo){
+		TextField tf = new TextField(caption, text);
+		if (nuevo){
+			tf.setInputPrompt(caption);	
+		}
+		tf.setStyleName("textolabel");
+		tf.setEnabled(nuevo);
+		return tf;
+	}
+	protected TextField getTextField(String caption,String text, String tipo){
+		
+		boolean enabled = tipo.equals("EDIT");
+		TextField tf = new TextField(caption, text);
+		tf.setInputPrompt(text);
+		tf.setStyleName("textolabel");
+		tf.setEnabled(enabled);
+		return tf;
+	}
+	
+	protected void addComponentsForm(FormLayout form,Component ... comps ){
+		for (Component c: comps){
+			form.addComponent(c);
+		}
+	}
+	protected String getString (Object valor){
+		return valor == null ? "" : valor.toString();
+	}
+	protected TextField getTextField(String text){
+		TextField tf = new TextField();
+		tf.setInputPrompt(text);
+		return tf;
+	}
+	protected Label getEtiqueta(String text){
+		Label eti = new Label(text);
+		eti.setStyleName("textolabel");
+		return eti;
 	}
 	
 	/**
@@ -46,14 +124,31 @@ public class ViewBase extends CustomComponent {
 	 * @param mensajeHTML mensaje de la advertencia
 	 * @param padre Pagina padre
 	 */
-	protected void advertencia(String titulo, String mensajeHTML, Page padre,String imagen){
+	public void advertencia(String titulo, String mensajeHTML, Page padre,String imagen){
 		Notification notificacion = new Notification("<b>"+titulo+"</b>",mensajeHTML,Notification.Type.WARNING_MESSAGE,true);
-		notificacion.setDelayMsec(1500);
+		notificacion.setDelayMsec(TIEMPO_DELAY_NOTIFICACIONES);
 		notificacion.setIcon(new ThemeResource("images/notificaciones/"+imagen));
 		//notificacion.setStyleName("notificacion-advertencia");
-		notificacion.show(padre);
+		notificacion.show(Page.getCurrent());
 	}
 	
+	protected void ejecutarMetodo(ViewBase base, String method) {
+
+		Method[] metodos = base.getClass().getMethods();
+		for (Method metodo : metodos) {
+			if (metodo.getName().equalsIgnoreCase(method)) {
+				try {
+					metodo.invoke(base);
+					return;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+
+	}
 	/**
 	 * Muestra una notificacion de exito en la pantalla
 	 * @param titulo titulo de la notificacion de exito
@@ -62,10 +157,10 @@ public class ViewBase extends CustomComponent {
 	 */
 	public void exito(String titulo, String mensajeHTML, Page padre,String imagen){
 		Notification notificacion = new Notification("<b>"+titulo+"</b>",mensajeHTML,Notification.Type.HUMANIZED_MESSAGE,true);
-		notificacion.setDelayMsec(1500);
+		notificacion.setDelayMsec(TIEMPO_DELAY_NOTIFICACIONES);
 		notificacion.setIcon(new ThemeResource("images/notificaciones/"+imagen));
 		//notificacion.setStyleName("notificacion-exito");
-		notificacion.show(padre);
+		notificacion.show(Page.getCurrent());
 	}
 	
 	/**
@@ -76,10 +171,10 @@ public class ViewBase extends CustomComponent {
 	 */
 	public void info(String titulo, String mensajeHTML, Page padre, String imagen){
 		Notification notificacion = new Notification("<b>"+titulo+"</b>",mensajeHTML,Notification.Type.TRAY_NOTIFICATION,true);
-		notificacion.setDelayMsec(1500);
+		notificacion.setDelayMsec(TIEMPO_DELAY_NOTIFICACIONES);
 		notificacion.setIcon(new ThemeResource("images/notificaciones/"+imagen));
 		notificacion.setStyleName("notificacion-info");
-		notificacion.show(padre);
+		notificacion.show(Page.getCurrent());
 	}
 	
 	/**
@@ -96,6 +191,11 @@ public class ViewBase extends CustomComponent {
 			VaadinSession.getCurrent().getLockInstance().unlock();
 		}
 		return res;
+	}
+	
+	protected String getLoggerUser(){
+		ChkUsuario us = (ChkUsuario) obtieneVariableSesion("USUARIO");
+		return us.getUsername();
 	}
 	
 	/**
@@ -126,7 +226,7 @@ public class ViewBase extends CustomComponent {
 	 */
 	public boolean verificaSesion(){
 		if (obtieneVariableSesion("USUARIO")==null){
-			info("Inicio de Sesion","Favor iniciar sesion",Page.getCurrent(),"vostumadre.jpg");
+			info("Inicio de Sesion","Favor iniciar sesion",Page.getCurrent(),VOS_TU_MADRE);
 			navegar("");
 			return false;
 		}

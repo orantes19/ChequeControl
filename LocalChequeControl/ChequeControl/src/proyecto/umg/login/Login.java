@@ -3,6 +3,7 @@ package proyecto.umg.login;
 import java.math.BigDecimal;
 
 import model.ChkUsuario;
+import proyecto.umg.base.ViewBase;
 import proyecto.umg.componentes.TextFieldU;
 import proyecto.umg.dao.ProjectDao;
 import proyecto.umg.utils.Utils;
@@ -99,7 +100,7 @@ public class Login extends CustomComponent implements View, ClickListener {
 
 		final Notification notif = new Notification(title, message,
 				type);
-		notif.setDelayMsec(1500);
+		notif.setDelayMsec(ViewBase.TIEMPO_DELAY_NOTIFICACIONES);
 		notif.setPosition(Position.TOP_LEFT);
 		notif.setStyleName("mystyle");
 		notif.setIcon(new ThemeResource("images/notificaciones/"+imageName));
@@ -147,15 +148,21 @@ public class Login extends CustomComponent implements View, ClickListener {
 						notif ("Error", "No existe el usuario ingresado",Notification.Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 					}
+					if (user.getStatus().intValue() == 0){
+						notif ("Error", "No existe el usuario ingresado",Notification.Type.WARNING_MESSAGE,STOP_ICON);
+						return;
+					}
 					if (user.getIntentosFallidos().intValue() >= 3){
 						notif("Error", "Su usuario se encuentra bloqueado por tener 3 intentos fallidos, por favor contacte a sistemas",Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 						
 					}
 					String pass = Utils.convertSha2(txtPass.getValue());
+					System.out.println(pass);
 					
 					if (user.getPassword().equals(pass)){
-						user.setIntentosFallidos(user.getIntentosFallidos().add(new BigDecimal(0)));
+						user.setIntentosFallidos(new BigDecimal(0));
+						
 						reiniciaValoresUsuario(dao);
 						inicio = true;					
 						try{
@@ -177,7 +184,7 @@ public class Login extends CustomComponent implements View, ClickListener {
 						user.setIntentosFallidos(user.getIntentosFallidos().add(new BigDecimal(1)));
 						System.out.println("Intentos fallidos  "+user.getIntentosFallidos());
 						reiniciaValoresUsuario(dao);
-						notif("Error", "Contraseña incorrecta. "+(user.getIntentosFallidos().intValue() == 3 ? "Su usuario ha sido bloqueado" : ""), Notification.Type.HUMANIZED_MESSAGE, "vostumadre.jpg");
+						notif("Error", "Contraseña incorrecta. "+(user.getIntentosFallidos().intValue() == 3 ? "Su usuario ha sido bloqueado" : ""), Notification.Type.HUMANIZED_MESSAGE, "vostumadre.png");
 					}
 				}finally{
 					if (dao != null){

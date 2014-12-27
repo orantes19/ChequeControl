@@ -18,8 +18,6 @@ public class ChkCuenta implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_CUENTA_NUMEROCUENTA_GENERATOR", sequenceName="CHK_CUENTA_SQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_CUENTA_NUMEROCUENTA_GENERATOR")
 	@Column(name="NUMERO_CUENTA")
 	private String numeroCuenta;
 
@@ -130,6 +128,10 @@ public class ChkCuenta implements Serializable {
 		chkMovimientosCuenta.setChkCuenta(null);
 
 		return chkMovimientosCuenta;
+	}
+	@Transient
+	public String getValueCombo(){
+		return getNumeroCuenta() + "  " + getChkBanco().getNombre();
 	}
 
 }

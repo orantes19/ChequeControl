@@ -20,7 +20,7 @@ public class ChkBanco implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_BANCO_IDBANCO_GENERATOR", sequenceName="CHK_BANCO_SQ")
+	@SequenceGenerator(name="CHK_BANCO_IDBANCO_GENERATOR", sequenceName="CHK_BANCO_SQ",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_BANCO_IDBANCO_GENERATOR")
 	@Column(name="ID_BANCO")
 	private long idBanco;

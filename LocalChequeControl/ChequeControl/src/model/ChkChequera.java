@@ -17,13 +17,19 @@ public class ChkChequera implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_CHEQUERA_IDCHEQUERA_GENERATOR", sequenceName="CHK_CHEQUE_SQ")
+	@SequenceGenerator(name="CHK_CHEQUERA_IDCHEQUERA_GENERATOR", sequenceName="CHK_CHEQUE_SQ",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_CHEQUERA_IDCHEQUERA_GENERATOR")
 	@Column(name="ID_CHEQUERA")
 	private long idChequera;
 
 	@Column(name="CANTIDAD_CHEQUES")
 	private BigDecimal cantidadCheques;
+	
+	@Column(name="CHEQUES_EMITIDOS")
+	private BigDecimal chequesEmitidos;
+	
+	@Column(name="ESTADO")
+	private BigDecimal estado;
 
 	@Column(name="NUMERO_SERIE")
 	private String numeroSerie;
@@ -51,6 +57,22 @@ public class ChkChequera implements Serializable {
 
 	public void setIdChequera(long idChequera) {
 		this.idChequera = idChequera;
+	}
+
+	public BigDecimal getChequesEmitidos() {
+		return chequesEmitidos;
+	}
+
+	public void setChequesEmitidos(BigDecimal chequesEmitidos) {
+		this.chequesEmitidos = chequesEmitidos;
+	}
+
+	public BigDecimal getEstado() {
+		return estado;
+	}
+
+	public void setEstado(BigDecimal estado) {
+		this.estado = estado;
 	}
 
 	public BigDecimal getCantidadCheques() {

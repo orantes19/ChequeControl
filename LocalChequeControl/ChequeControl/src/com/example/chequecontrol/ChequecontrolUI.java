@@ -2,38 +2,19 @@ package com.example.chequecontrol;
 
 import javax.servlet.annotation.WebServlet;
 
-import model.ChkUsuario;
-
-import org.eclipse.persistence.expressions.spatial.SpatialParameters.Units;
-
-import proyecto.umg.base.ViewBase;
-import proyecto.umg.dao.ProjectDao;
 import proyecto.umg.login.Login;
-import proyecto.umg.utils.Utils;
 import proyecto.umg.vistas.Menu;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.CustomizedSystemMessages;
+import com.vaadin.server.SystemMessages;
+import com.vaadin.server.SystemMessagesInfo;
+import com.vaadin.server.SystemMessagesProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 /**
@@ -50,6 +31,9 @@ public class ChequecontrolUI extends UI {
 	@VaadinServletConfiguration(productionMode = false, ui = ChequecontrolUI.class)
 	public static class Servlet extends VaadinServlet {
 	}
+	
+	
+	
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -63,8 +47,22 @@ public class ChequecontrolUI extends UI {
 //		
 //		layout.addComponent(login);
 //		layout.setComponentAlignment(login, Alignment.MIDDLE_CENTER);
-		
-		
+		request.getService().setSystemMessagesProvider(
+			    new SystemMessagesProvider() {
+			    @Override 
+			    public SystemMessages getSystemMessages(
+			        SystemMessagesInfo systemMessagesInfo) {
+			        CustomizedSystemMessages messages = new CustomizedSystemMessages();
+			        messages.setSessionExpiredCaption("Sesion Expirada");
+			        messages.setSessionExpiredMessage("Su sesión ha expirado, tome nota de todos los datos no guardados y haga click aqui para continuar.");
+			        
+//			        messages.setCommunicationErrorCaption("Comm Err");
+//			        messages.setCommunicationErrorMessage("This is bad.");
+//			        messages.setCommunicationErrorNotificationEnabled(true);
+//			        messages.setCommunicationErrorURL("http://vaadin.com/");
+			        return messages;
+			    }
+			});
 		
 		navegador.addView("", new Login());
 		navegador.addView("MENU", new Menu());

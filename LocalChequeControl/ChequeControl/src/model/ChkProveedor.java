@@ -16,7 +16,7 @@ public class ChkProveedor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_PROVEEDOR_CODPROVEEDOR_GENERATOR", sequenceName="CHK_PROVEEDOR_SQ")
+	@SequenceGenerator(name="CHK_PROVEEDOR_CODPROVEEDOR_GENERATOR", sequenceName="CHK_PROVEEDOR_SQ",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_PROVEEDOR_CODPROVEEDOR_GENERATOR")
 	@Column(name="COD_PROVEEDOR")
 	private long codProveedor;
