@@ -102,7 +102,6 @@ public class ChkChequera implements Serializable {
 	public ChkCheque addChkCheque(ChkCheque chkCheque) {
 		getChkCheques().add(chkCheque);
 		chkCheque.setChkChequera(this);
-
 		return chkCheque;
 	}
 
@@ -127,6 +126,10 @@ public class ChkChequera implements Serializable {
 
 	public void setChkBanco(ChkBanco chkBanco) {
 		this.chkBanco = chkBanco;
+	}
+	@Transient
+	public String getName(){
+		return numeroSerie+" - Cuenta: "+chkCuenta.getNumeroCuenta();
 	}
 
 }

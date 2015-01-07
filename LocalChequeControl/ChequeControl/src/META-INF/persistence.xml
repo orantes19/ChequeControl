@@ -2,7 +2,8 @@
 <persistence version="2.1"
 	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="ChequeControl">
+	<persistence-unit name="ChequeControl" transaction-type="RESOURCE_LOCAL"                                                                                >
+<!--                 <non-jta-data-source>jdbc/chequecontrol</non-jta-data-source> -->
 		
 		<class>model.ChkBanco</class>
 		<class>model.ChkCheque</class>
@@ -16,15 +17,17 @@
 		<class>model.ChkRolesPorUsuario</class>
 		<class>model.ChkRolesPorUsuarioPK</class>
 		<class>model.ChkUsuario</class>
-		<properties>
-			<property name="hibernate.show_sql" value="true" />
-			<property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
-<!-- 			<property name="javax.persistence.jdbc.user" value="chequecontrol" /> -->
-<!-- 			<property name="javax.persistence.jdbc.password" value="chkcontrol" /> -->
-				<property name="javax.persistence.jdbc.user" value="system" />
-				<property name="javax.persistence.jdbc.password" value="root" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<class>model.ChkUsuarioMontosConf</class>
+		<class>model.ChkHistorialAccesos</class>
+		<shared-cache-mode>NONE</shared-cache-mode>
+		 <properties>
+                        <property name="hibernate.show_sql" value="true" />
+                        <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
+                        <property name="javax.persistence.jdbc.user" value="system" />
+                        <property name="javax.persistence.jdbc.password" value="root" />
+                <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:xe" />
 
-		</properties>
+                </properties>
+		
 	</persistence-unit>
 </persistence>

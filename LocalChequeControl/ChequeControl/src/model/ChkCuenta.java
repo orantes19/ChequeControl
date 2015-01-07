@@ -22,6 +22,8 @@ public class ChkCuenta implements Serializable {
 	private String numeroCuenta;
 
 	private BigDecimal estado;
+	
+	private String moneda;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="FECHA_APERTURA")
@@ -132,6 +134,14 @@ public class ChkCuenta implements Serializable {
 	@Transient
 	public String getValueCombo(){
 		return getNumeroCuenta() + "  " + getChkBanco().getNombre();
+	}
+
+	public String getMoneda() {
+		return moneda;
+	}
+
+	public void setMoneda(String moneda) {
+		this.moneda = moneda;
 	}
 
 }

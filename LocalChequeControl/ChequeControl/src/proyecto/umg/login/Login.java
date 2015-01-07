@@ -1,7 +1,9 @@
 package proyecto.umg.login;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
+import model.ChkHistorialAccesos;
 import model.ChkUsuario;
 import proyecto.umg.base.ViewBase;
 import proyecto.umg.componentes.TextFieldU;
@@ -17,6 +19,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -29,6 +32,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 /**
  * 
@@ -42,7 +46,7 @@ public class Login extends CustomComponent implements View, ClickListener {
 	private AbsoluteLayout mainLayout;
 	private VerticalLayout layout;
 	TextFieldU txtUsuario = new TextFieldU("usuario", 10, 1, "", true, true);
-	private static final String STOP_ICON = "stop.jpg";
+	private static final String STOP_ICON = "vostumadre.png";
 	PasswordField txtPass = new PasswordField();
 
 	/**
@@ -89,6 +93,7 @@ public class Login extends CustomComponent implements View, ClickListener {
 		txtPass.setRequired(true);
 //		form.addComponent(select);
 		Button boton = new Button("Iniciar Sesion");
+		boton.setStyleName("button");
 		boton.addClickListener(this);
 		form.addComponent(boton);
 		layout.addComponent(form);		
@@ -126,33 +131,45 @@ public class Login extends CustomComponent implements View, ClickListener {
 			
 			Button btn = (Button) event.getComponent();
 			if (btn.getCaption().equals("Iniciar Sesion")){			
-			
+				ProjectDao<ChkHistorialAccesos> daoHist = null;
 				ProjectDao<ChkUsuario> dao = null;
 				try{
+					daoHist = new ProjectDao<ChkHistorialAccesos>(new ChkHistorialAccesos());
 					dao = new ProjectDao<>(new ChkUsuario());
 					
 					try {
+						daoHist.getEntity().setFecha(new Date());
 						
 						user = dao.findElementById(txtUsuario.getValue());
+						daoHist.getEntity().setUsuario(txtUsuario.getValue());
+						WebBrowser b = VaadinSession.getCurrent().getBrowser();
+						String ip = b.getAddress() ;
+						daoHist.getEntity().setIp(ip);
+						daoHist.getEntity().setResultado("ERROR");
 						
 					} catch (Exception e) {
 						e.printStackTrace();
+						daoHist.save();
 						notif ("Error", "Ocurrio un error al loguearse, intente mas tarde",Notification.Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 					}
 					if ( user == null){
 						notif ("Error", "No existe el usuario ingresado",Notification.Type.WARNING_MESSAGE,STOP_ICON);
+						daoHist.save();
 						return;
 					}
 					if (user.getUsername()== null){
+						daoHist.save();
 						notif ("Error", "No existe el usuario ingresado",Notification.Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 					}
 					if (user.getStatus().intValue() == 0){
+						daoHist.save();
 						notif ("Error", "No existe el usuario ingresado",Notification.Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 					}
 					if (user.getIntentosFallidos().intValue() >= 3){
+						daoHist.save();
 						notif("Error", "Su usuario se encuentra bloqueado por tener 3 intentos fallidos, por favor contacte a sistemas",Type.WARNING_MESSAGE,STOP_ICON);
 						return;
 						
@@ -167,13 +184,12 @@ public class Login extends CustomComponent implements View, ClickListener {
 						inicio = true;					
 						try{
 							VaadinSession.getCurrent().getLockInstance().lock();
-							
-							System.out.println("Aqui meto el usuario a sesion "+user);
-						    VaadinSession.getCurrent().setAttribute("USUARIO", user);
+							VaadinSession.getCurrent().setAttribute("USUARIO", user);
 						}finally{
 							VaadinSession.getCurrent().getLockInstance().unlock();
 						}
-						
+						daoHist.getEntity().setResultado("OK");
+						daoHist.save();
 						Navigator nav = (Navigator) VaadinSession.getCurrent().getAttribute("NAVEGADOR");					
 						nav.navigateTo("MENU");					
 						
@@ -190,6 +206,10 @@ public class Login extends CustomComponent implements View, ClickListener {
 					if (dao != null){
 						System.out.println("Se cierra entity manager");
 						dao.closeEntityManager();
+						if (daoHist != null){
+							daoHist.closeEntityManager();
+							
+						}
 					}
 					
 				}

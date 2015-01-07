@@ -1,11 +1,14 @@
 package proyecto.umg.dao;
 
 import java.lang.reflect.Method;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import proyecto.umg.persistence.FactoryManager;
 /**
@@ -37,6 +40,8 @@ public class ProjectDao <T> extends FactoryManager{
 		
 		if (!em.getTransaction().isActive())
 			em.getTransaction().begin();
+		if (!factory.isOpen())
+			factory.createEntityManager();
 		
 		try{
 			
@@ -68,6 +73,35 @@ public class ProjectDao <T> extends FactoryManager{
 			listaItems = (List<T>) em.createNamedQuery(namedQuery, 
 					entity.getClass()).getResultList();			
 			
+			return listaItems;			
+		}catch(RuntimeException e){
+			em.getTransaction().rollback();
+			e.printStackTrace();
+			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+		}		
+		
+	}
+	@SuppressWarnings("unchecked")
+	public List<T> findElements(String namedQuery, Object[] params, TemporalType tipo) throws Exception{
+		
+		if (!em.getTransaction().isActive())
+			em.getTransaction().begin();
+		
+		try{
+			Query query = em.createQuery(namedQuery);
+			int num = 1;
+			if (params !=null){
+				
+				for (Object o: params){
+					
+						query.setParameter(num, (Date) o,tipo);				
+						num++;
+					
+				}
+			}
+						
+			listaItems = (List<T>) query.getResultList();			
+			
 			return listaItems;
 			
 			
@@ -79,6 +113,7 @@ public class ProjectDao <T> extends FactoryManager{
 		}		
 		
 	}
+	
 	@SuppressWarnings("unchecked")
 	public List<T> findElements(String namedQuery, Object[] params) throws Exception{
 		
@@ -89,8 +124,12 @@ public class ProjectDao <T> extends FactoryManager{
 			Query query = em.createQuery(namedQuery);
 			int num = 1;
 			if (params !=null){
+				
 				for (Object o: params){
-					query.setParameter(num, o);
+					
+
+						query.setParameter(num, o);
+					
 					num++;
 					
 				}
@@ -117,7 +156,7 @@ public class ProjectDao <T> extends FactoryManager{
 		}
 	}
 	
-	public T save() throws Exception{	
+	public T save() throws RuntimeException{	
 		
 		if (!em.getTransaction().isActive())
 			em.getTransaction().begin();
@@ -125,14 +164,19 @@ public class ProjectDao <T> extends FactoryManager{
 		
 		try{
 			em.persist(entity);
-			em.getTransaction().commit();
-					
+			em.flush();			
+			em.getTransaction().commit();	
+			
 			
 		}catch(RuntimeException e){
-			if (em.getTransaction().isActive())
+			if (em.getTransaction().isActive()){
 				em.getTransaction().rollback();
+				System.out.println("Se hizo el rolllback");
+			}
+				
 			e.printStackTrace();
-			throw new Exception("Ha ocurrido un error:  "+e.getMessage());
+			throw e;
+			
 			
 		}
 		return entity;
@@ -143,6 +187,12 @@ public class ProjectDao <T> extends FactoryManager{
 	 */
 	public T getEntity() {
 		return entity;
+	}
+	
+	public void flush(){
+		if (!em.getTransaction().isActive())
+			em.getTransaction().begin();
+		em.flush();
 	}
 
 	/**
@@ -221,7 +271,7 @@ public class ProjectDao <T> extends FactoryManager{
 				}
 				em.merge(entity);				
 				em.getTransaction().commit();				
-			
+				
 		}catch(Exception e){
 			em.getTransaction().rollback();
 			e.printStackTrace();
@@ -245,11 +295,12 @@ public class ProjectDao <T> extends FactoryManager{
 			if (em.getTransaction().isActive()){
 				em.flush();
 			}
-			
-			em.close();
+			if (em.isOpen())
+				em.close();
 		}
 		if (factory != null){
-			factory.close();
+			if (factory.isOpen())
+				factory.close();
 		}
 		
 	}

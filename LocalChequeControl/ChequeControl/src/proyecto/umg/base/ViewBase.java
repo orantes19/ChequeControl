@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import model.ChkRol;
 import model.ChkRolesPorUsuario;
 import model.ChkUsuario;
 
@@ -12,6 +11,9 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.AbstractSelect;
+import com.vaadin.ui.AbstractTextField;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
@@ -50,7 +52,13 @@ public class ViewBase extends CustomComponent {
 	protected static final String EMPTY = "";
 	
 	protected static final String LISTA_ITEMS_METHOD = "buildMainLayout";
-
+	
+	protected static final String IMG_BUSCAR = "images/32px/busqueda.png";
+	protected static final String IMG_CHEQUE = "images/32px/cheque.png";
+	
+	protected static final String BASE_R32 = "images/32px/";
+	
+	protected static final String BASE_R20 = "images/20px/";
 	/**
 	 * Muestra notificacion de error en pantalla
 	 * @param titulo titulo de lerror
@@ -99,9 +107,32 @@ public class ViewBase extends CustomComponent {
 		return tf;
 	}
 	
+	protected void setRequiredElements(Component ... comps){
+		for (Component c: comps){
+			if (c instanceof AbstractTextField){
+				((AbstractTextField)c).setRequired(true);
+			}
+			if (c instanceof AbstractSelect){
+				((AbstractSelect)c).setRequired(true);
+			}
+			
+			
+			
+		}
+	}
+	
+	protected void setStyleButtons(Button ... botones){
+		for (Button b: botones){
+			b.setStyleName("button");
+		}
+	}
+	
 	protected void addComponentsForm(FormLayout form,Component ... comps ){
 		for (Component c: comps){
-			form.addComponent(c);
+			if (c != null){
+				form.addComponent(c);
+			}
+				
 		}
 	}
 	protected String getString (Object valor){
@@ -177,6 +208,10 @@ public class ViewBase extends CustomComponent {
 		notificacion.show(Page.getCurrent());
 	}
 	
+	public ThemeResource getResource(String img){
+		return new ThemeResource(img);
+	}
+	
 	/**
 	 * Obtiene un objeto de sesion
 	 * @param id identificador del objeto
@@ -235,11 +270,11 @@ public class ViewBase extends CustomComponent {
 	
 	protected boolean validaRol(String rol){
 		ChkUsuario user = (ChkUsuario) obtieneVariableSesion("USUARIO");
-		System.out.println("usuario obtenido  "+user);
+		
 		if (user != null){
 			for (ChkRolesPorUsuario rolact: user.getChkRolesPorUsuarios()){
 				String r = rolact.getChkRol().getRol();
-				System.out.println("rol obtenido  "+r);
+				
 				if (r.equalsIgnoreCase(rol)){
 					return true;
 				}
@@ -249,4 +284,12 @@ public class ViewBase extends CustomComponent {
 		return false;
 		
 	}
+	
+	protected Throwable getLastThrowable(Exception e) {
+		Throwable t = null;
+		
+			for(t = e.getCause(); t.getCause() != null; t = t.getCause());
+
+		return t;
+	} 
 }

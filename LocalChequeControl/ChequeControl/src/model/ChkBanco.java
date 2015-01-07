@@ -30,6 +30,7 @@ public class ChkBanco implements Serializable {
 	@Column(name="FECHA_CREACION")
 	private String fechaCreacion;
 
+	@Column(name="NOMBRE")
 	private String nombre;
 
 	private String telefono;

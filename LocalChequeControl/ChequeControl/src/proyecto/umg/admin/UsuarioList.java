@@ -111,15 +111,19 @@ public class UsuarioList extends ViewBase implements ClickListener, Property.Val
 		listadoUsuarios.addValueChangeListener(this);
 		principal.addComponent(listadoUsuarios);
 		principal.setComponentAlignment(listadoUsuarios, Alignment.MIDDLE_CENTER);
-		btnAdd = new Button("Nuevo");
-		btnEdit= new Button("Editar");
-		btnRmv = new Button ("Eliminar");
+		btnAdd = new Button("Nuevo",getResource(BASE_R32+"nuevo.png"));
+		btnEdit= new Button("Editar",getResource(BASE_R32+"editar.png"));
+		btnRmv = new Button ("Eliminar",getResource(BASE_R32+"borrar.png"));
+		btnAdd.setStyleName("button");
 		btnView = new Button ("Ver");
 		addListener(btnAdd);
 		btnAdd.setEnabled(true);
 		btnEdit.setEnabled(false);
+		btnEdit.setStyleName("button");
 		btnRmv.setEnabled(false);
+		btnRmv.setStyleName("button");
 		btnView.setEnabled(false);
+		btnView.setStyleName("button");
 		addListener(btnEdit);
 		addListener(btnRmv);
 		addListener(btnView);
@@ -148,7 +152,7 @@ public class UsuarioList extends ViewBase implements ClickListener, Property.Val
 			UI.getCurrent().addWindow(usEd);
 		}
 		if (caption.equals("Editar")){
-			Ventana usEd = new Ventana("Ver Usuario", 40,90,new UserEdi(EDIT,this, selected));
+			Ventana usEd = new Ventana("Editar Usuario", 40,90,new UserEdi(EDIT,this, selected));
 			UI.getCurrent().addWindow(usEd);
 		}
 		if (caption.equals("Eliminar")){			 
@@ -162,6 +166,7 @@ public class UsuarioList extends ViewBase implements ClickListener, Property.Val
 			Ventana delete = new Ventana("Eliminar", 30, 20);
 			delete.setModal(true);
 			EntityDel<ChkUsuario> contenido = new EntityDel<ChkUsuario>(this, selected.getUsername(), "usuario", daoEliminar, delete);
+			contenido.setBorradoInactivar(false);
 			delete.setContenido(contenido);		
 			UI.getCurrent().addWindow(delete);
 		}

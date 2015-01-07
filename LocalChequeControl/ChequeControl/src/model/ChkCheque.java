@@ -12,12 +12,12 @@ import java.util.Date;
  */
 @Entity
 @Table(name="CHK_CHEQUE")
-@NamedQuery(name="ChkCheque.findAll", query="SELECT c FROM ChkCheque c")
+@NamedQuery(name="ChkCheque.findAll", query="SELECT c FROM ChkCheque c order by c.chkProveedor.nombreComercial asc")
 public class ChkCheque implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_CHEQUE_IDCHEQUE_GENERATOR", sequenceName="CHK_CHEQUE_SQ")
+	@SequenceGenerator(name="CHK_CHEQUE_IDCHEQUE_GENERATOR", sequenceName="CHK_CHEQUE_SQ",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_CHEQUE_IDCHEQUE_GENERATOR")
 	@Column(name="ID_CHEQUE")
 	private long idCheque;
@@ -27,9 +27,12 @@ public class ChkCheque implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="FECHA_EMISION")
 	private Date fechaEmision;
-
+	@Column(name="MONTO")
 	private BigDecimal monto;
-
+	
+	@Column(name="USUARIO")	
+	private String usuario;
+	
 	@Column(name="NUMERO_CHEQUE")
 	private BigDecimal numeroCheque;
 
@@ -42,6 +45,14 @@ public class ChkCheque implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="COD_PROVEEDOR")
 	private ChkProveedor chkProveedor;
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
 
 	public ChkCheque() {
 	}

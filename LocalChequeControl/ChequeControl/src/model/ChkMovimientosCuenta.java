@@ -12,12 +12,12 @@ import java.util.Date;
  */
 @Entity
 @Table(name="CHK_MOVIMIENTOS_CUENTA")
-@NamedQuery(name="ChkMovimientosCuenta.findAll", query="SELECT c FROM ChkMovimientosCuenta c")
+@NamedQuery(name="ChkMovimientosCuenta.findAll", query="SELECT c FROM ChkMovimientosCuenta c order by c.chkCuenta.chkBanco.nombre asc, c.chkCuenta.numeroCuenta asc, c.tipoMovimiento asc")
 public class ChkMovimientosCuenta implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_MOVIMIENTOS_CUENTA_IDMOVIMIENTO_GENERATOR", sequenceName="CHK_MOVIMIENTOS_CUENTA_SQ")
+	@SequenceGenerator(name="CHK_MOVIMIENTOS_CUENTA_IDMOVIMIENTO_GENERATOR", sequenceName="CHK_MOVIMIENTOS_CUENTA_SQ", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_MOVIMIENTOS_CUENTA_IDMOVIMIENTO_GENERATOR")
 	@Column(name="ID_MOVIMIENTO")
 	private long idMovimiento;
@@ -31,13 +31,35 @@ public class ChkMovimientosCuenta implements Serializable {
 
 	@Column(name="TIPO_MOVIMIENTO")
 	private BigDecimal tipoMovimiento;
-
+	
+	
+	@Column(name="DOCUMENTO_BANCO")
+	private String documentoBanco;
+	
+	@Column(name="USUARIO")
+	private String usuario;
 	//bi-directional many-to-one association to ChkCuenta
 	@ManyToOne
 	@JoinColumn(name="NUMERO_CUENTA")
 	private ChkCuenta chkCuenta;
 
 	public ChkMovimientosCuenta() {
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getDocumentoBanco() {
+		return documentoBanco;
+	}
+
+	public void setDocumentoBanco(String documentoBanco) {
+		this.documentoBanco = documentoBanco;
 	}
 
 	public long getIdMovimiento() {

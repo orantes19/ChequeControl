@@ -7,7 +7,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2014-12-27T13:34:14.232-0600")
+@Generated(value="Dali", date="2014-12-27T16:20:00.059-0600")
 @StaticMetamodel(ChkUsuario.class)
 public class ChkUsuario_ {
 	public static volatile SingularAttribute<ChkUsuario, String> username;
@@ -22,4 +22,5 @@ public class ChkUsuario_ {
 	public static volatile SingularAttribute<ChkUsuario, BigDecimal> status;
 	public static volatile SingularAttribute<ChkUsuario, String> usuarioCreacion;
 	public static volatile ListAttribute<ChkUsuario, ChkRolesPorUsuario> chkRolesPorUsuarios;
+	public static volatile ListAttribute<ChkUsuario, ChkUsuarioMontosConf> chkUsuarioMontosConf;
 }

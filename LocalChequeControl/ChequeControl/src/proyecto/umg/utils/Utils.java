@@ -8,6 +8,7 @@ import javax.naming.InitialContext;
 
 public class Utils {
 	public static String SHA256 = "SHA-256";
+	public static final String REGEXP_MAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	public static String convertSha2(String string){
 		return getStringMessageDigest(string, SHA256);
@@ -63,5 +64,16 @@ public class Utils {
 	
 	        return hash;
 	
+	    }
+	    
+	    public static String getStatusText(int siguiente){
+	    	String estado =   	
+	    	siguiente == 2 ? "PENDIENTE LIBERACION AUDITORIA" :
+				siguiente == 3 ? "PENDIENTE LIBERACION GERENCIA" :
+						siguiente == 4  ? "PENDIENTE LIBERACION CONSEJO" :
+							siguiente == 10 ? "PENDIENTE ENTREGA" :
+									siguiente == 11 ? "PENDIENTE ENTREGA" :
+										siguiente == 12 ? "ENTREGADO" : "";
+	    	return estado;
 	    }
 }

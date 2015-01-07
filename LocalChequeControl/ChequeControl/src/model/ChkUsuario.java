@@ -48,8 +48,10 @@ public class ChkUsuario  implements Serializable {
 
 	@Column(name="SEGUNDO_NOMBRE")
 	private String segundoNombre;
-
+		
 	private BigDecimal status;
+	
+	
 
 	@Column(name="USUARIO_CREACION")
 	private String usuarioCreacion;
@@ -58,7 +60,19 @@ public class ChkUsuario  implements Serializable {
 	@OneToMany(mappedBy="chkUsuario",cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ChkRolesPorUsuario> chkRolesPorUsuarios;
 	
+	@OneToMany(mappedBy="chkUsuario",fetch=FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ChkUsuarioMontosConf> chkUsuarioMontosConf;
 	
+	
+	public List<ChkUsuarioMontosConf> getChkUsuarioMontosConf() {
+		return chkUsuarioMontosConf;
+	}
+
+	public void setChkUsuarioMontosConf(
+			List<ChkUsuarioMontosConf> chkUsuarioMontosConf) {
+		this.chkUsuarioMontosConf = chkUsuarioMontosConf;
+	}
+
 	public String getUsername() {
 		return this.username;
 	}

@@ -17,7 +17,7 @@ public class ChkConfCheque implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="CHK_CONF_CHEQUES_IDCONF_GENERATOR", sequenceName="CHK_CONF_CHEQUES")
+	@SequenceGenerator(name="CHK_CONF_CHEQUES_IDCONF_GENERATOR", sequenceName="CHK_CONF_CHEQUES", allocationSize = 1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CHK_CONF_CHEQUES_IDCONF_GENERATOR")
 	@Column(name="ID_CONF")
 	private long idConf;
